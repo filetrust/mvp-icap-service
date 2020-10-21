@@ -5,7 +5,7 @@ env:
   IMAGE: mvp-icap-service
   TAG: develop
 on:
-  pull_request:
+  push:
     branches: [ develop ]
 
 jobs:
