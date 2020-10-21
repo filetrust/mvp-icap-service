@@ -5,9 +5,7 @@ on:
     paths:
       - 'c-icap-modules/**'
   pull_request:
-    branches: 
-    - develop
-    - main 
+    branches: [ develop ]
     paths:
       - 'c-icap-modules/**'
 jobs:
