@@ -1,0 +1,23 @@
+name: Gated
+env:
+  DOCKERHUB_USERNAME: icapserviceaccount
+  REPOSITORY: glasswallsolutions
+  IMAGE: mvp-icap-service
+  TAG: develop
+on:
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+
+  build-push-docker-image::
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Login to DockerHub Registry
+      run: echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ env.DOCKERHUB_USERNAME }} --password-stdin
+    - name: Build and Push Docker Image
+      run: |
+        docker build -t ${{ env.REPOSITORY }}/${{ env.IMAGE }}:${{ env.TAG }}-${GITHUB_SHA::7} -t ${{ env.REPOSITORY }}/${{ env.IMAGE }}:${{ env.TAG }}-latest .
+        docker push ${{ env.REPOSITORY }}/${{ env.IMAGE }}

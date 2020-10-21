@@ -1,0 +1,19 @@
+name: Gated
+
+env:
+  DOCKERHUB_USERNAME: icapserviceaccount
+  REPOSITORY: glasswallsolutions
+  IMAGE: mvp-icap-service
+  TAG: develop
+on:
+  pull_request:
+    branches: [ develop ]
+
+jobs:
+
+  build:
+    name: Build Docker Image
+    runs-on: ubuntu-latest
+    steps:
+    - name: Build Docker Image
+      run: docker build  .
