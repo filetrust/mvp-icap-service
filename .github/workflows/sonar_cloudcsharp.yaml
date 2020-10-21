@@ -8,7 +8,9 @@ on:
     paths:
       - 'cloud-proxy-app/**'
   pull_request:
-    branches: [ develop, main ]
+    branches: 
+    - develop
+    - main 
     paths:
       - 'cloud-proxy-app/**'
 jobs:
