@@ -16,4 +16,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Build Docker Image
-      run: docker build -f Dockerfile .
+      run: docker build -t ${{ env.IMAGE }} .
