@@ -338,7 +338,7 @@ docker build -t c-icap-server .
 ```
 
 ### Running the Docker Image 
-The Proxy API App requires a number of environment variables to be configured to enable it to connect to the resources on which it is dependent. These are described in the sections above. This are provided on the `docker run` command-line when running the Docker container.
+The Proxy API App requires a number of environment variables to be configured to enable it to connect to the resources on which it is dependent. These are described in the sections above. They are provided on the `docker run` command-line when starting the Docker container.
 ```
 docker run -d \
 -e TransactionOutcomeQueueName='local-transaction-outcome' \
