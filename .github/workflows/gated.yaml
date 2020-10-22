@@ -27,9 +27,9 @@ jobs:
       with:
         dotnet-version: 3.1.101
     - name: Install dependencies
-      run: dotnet restore .cloud-proxy-app/cloud-proxy-app.sln
+      run: dotnet restore ./cloud-proxy-app/cloud-proxy-app.sln
     - name: Build
-      run: dotnet build .cloud-proxy-app/cloud-proxy-app.sln --configuration Release --no-restore
+      run: dotnet build ./cloud-proxy-app/cloud-proxy-app.sln --configuration Release --no-restore
     - name: Test
-      run: dotnet test .cloud-proxy-app/cloud-proxy-app.sln --no-restore --verbosity normal
+      run: dotnet test ./cloud-proxy-app/cloud-proxy-app.sln --no-restore --verbosity normal
       
