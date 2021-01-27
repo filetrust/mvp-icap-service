@@ -363,3 +363,26 @@ docker run -d \
  -v C:\LocalFolder\Cert:/usr/local/c-icap/cert:ro
  c-icap-server:latest
 ```
+
+If modification of the `ICAP Server` or `gw_rebuild` resource configuration is required, then replacement configuration files can be mounted to landing folders in the container. Configuration files in these folders will be copied across to over-write the default configuration files when the container starts up.
+- The configuration files must be correctly named: `c-icap.conf` and `gw_rebuild.conf`.
+- The configuration files must be mounted to the correct folders
+  - /usr/local/c-icap/conf
+  - /usr/local/c-icap/rebuild:
+- The contents of the configuration files *must* have Linux EOL markers
+- The provision of configuration files is optional. If configuration files are being provided then the `ICAP Server` configuration is mandated, but the `gw_rebuild` configuration is optional.
+
+The following `docker run` command-line provides an example instance of the service being started with both  `ICAP Server` and  `gw_rebuild` configuration. In this example the configuration files are in the following local folders
+- `c-icap.conf` - C:\LocalFolder\cicap
+- `gw_rebuild.conf` - C:\LocalFolder\gw_rebuild
+
+```
+docker run -it --rm --name=cicap \
+-v C:\LocalFolder\Cert:/usr/local/c-icap/cert:ro \
+-v C:\LocalFolder\cicap:/usr/local/c-icap/conf:ro \
+-v C:\LocalFolder\gw_rebuild:/usr/local/c-icap/rebuild:ro \
+-p 1344:1344 \
+-p 1345:1345 \
+c-icap-server:latest
+```
+
