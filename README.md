@@ -6,7 +6,7 @@ ICAP Service with ICAP Resource that interfaces with GW Cloud products
     - [Build the Server](#build-the-server)
     - [Build the Modules](#build-the-modules)
 - [Testing the Installation](#testing-the-installation)
-- [Retrieving Statistics](#retrieving-the-statistics)
+- [Retrieving Statistics](#retrieving-statistics)
 - [gw_rebuild cloud-proxy-app](#gw_rebuild-cloud-proxy-app)
     - [Setup the `cloud-proxy-app` Build Environment](#setup-the-cloud-proxy-app-build-environment)
     - [Building `cloud-proxy-app`](#building-cloud-proxy-app)
