@@ -1,4 +1,4 @@
-# Glasswall ICAP Service - Minimum Viable Prototype
+# Glasswall ICAP Service
 ICAP Service with ICAP Resource that interfaces with GW Cloud products
 
 - [Getting Started](#getting-started)
