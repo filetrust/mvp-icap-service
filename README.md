@@ -351,11 +351,15 @@ A number of Proxy API App parameters can be configured through environment varia
 |RequestMessageName | The message name used as a routing key for the Adaptation Request. | `adaptation-request` |
 |MBHostName | The hostname of the RabbitMQ Message Broker hosting the Adaptation Request Queue. | `rabbitmq-service` |
 |MBPort | The port number on which the RabbitMQ Message Broker is available, | `5672` |
+
+The default configuration enables the ICAP TLS Port. To support this TLS Certificate and Key files need to be provided to the container by mounting the folder that contains them. The ICAP Server is expecting the files to be in the `usr/local/c-icap/cert` folder. _It is important when specifying the local folder that the full pathname is provided._
  
 The following `docker run` command-line provides an example instance of the service.
 ```
 docker run -d \
  -e MBHostName='test-rabbitmq-service' \
  -p 1344:1344 \
+ -p 1345:1345 \
+ -v C:\LocalFolder\Cert:/usr/local/c-icap/cert:ro
  c-icap-server:latest
 ```
