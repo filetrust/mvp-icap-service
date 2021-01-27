@@ -1,4 +1,4 @@
-# Glasswall ICAP Service - Minimum Viable Prototype
+# Glasswall ICAP Service
 ICAP Service with ICAP Resource that interfaces with GW Cloud products
 
 - [Getting Started](#getting-started)
@@ -6,7 +6,7 @@ ICAP Service with ICAP Resource that interfaces with GW Cloud products
     - [Build the Server](#build-the-server)
     - [Build the Modules](#build-the-modules)
 - [Testing the Installation](#testing-the-installation)
-- [Retrieving Statistics](#retrieving-the-statistics)
+- [Retrieving Statistics](#retrieving-statistics)
 - [gw_rebuild cloud-proxy-app](#gw_rebuild-cloud-proxy-app)
     - [Setup the `cloud-proxy-app` Build Environment](#setup-the-cloud-proxy-app-build-environment)
     - [Building `cloud-proxy-app`](#building-cloud-proxy-app)
@@ -351,11 +351,38 @@ A number of Proxy API App parameters can be configured through environment varia
 |RequestMessageName | The message name used as a routing key for the Adaptation Request. | `adaptation-request` |
 |MBHostName | The hostname of the RabbitMQ Message Broker hosting the Adaptation Request Queue. | `rabbitmq-service` |
 |MBPort | The port number on which the RabbitMQ Message Broker is available, | `5672` |
+
+The default configuration enables the ICAP TLS Port. To support this TLS Certificate and Key files need to be provided to the container by mounting the folder that contains them. The ICAP Server is expecting the files to be in the `usr/local/c-icap/cert` folder. _It is important when specifying the local folder that the full pathname is provided._
  
 The following `docker run` command-line provides an example instance of the service.
 ```
 docker run -d \
  -e MBHostName='test-rabbitmq-service' \
  -p 1344:1344 \
+ -p 1345:1345 \
+ -v C:\LocalFolder\Cert:/usr/local/c-icap/cert:ro
  c-icap-server:latest
 ```
+
+If modification of the `ICAP Server` or `gw_rebuild` resource configuration is required, then replacement configuration files can be mounted to landing folders in the container. Configuration files in these folders will be copied across to over-write the default configuration files when the container starts up.
+- The configuration files must be correctly named: `c-icap.conf` and `gw_rebuild.conf`.
+- The configuration files must be mounted to the correct folders
+  - /usr/local/c-icap/conf
+  - /usr/local/c-icap/rebuild:
+- The contents of the configuration files *must* have Linux EOL markers
+- The provision of configuration files is optional. If configuration files are being provided then the `ICAP Server` configuration is mandated, but the `gw_rebuild` configuration is optional.
+
+The following `docker run` command-line provides an example instance of the service being started with both  `ICAP Server` and  `gw_rebuild` configuration. In this example the configuration files are in the following local folders
+- `c-icap.conf` - C:\LocalFolder\cicap
+- `gw_rebuild.conf` - C:\LocalFolder\gw_rebuild
+
+```
+docker run -it --rm --name=cicap \
+-v C:\LocalFolder\Cert:/usr/local/c-icap/cert:ro \
+-v C:\LocalFolder\cicap:/usr/local/c-icap/conf:ro \
+-v C:\LocalFolder\gw_rebuild:/usr/local/c-icap/rebuild:ro \
+-p 1344:1344 \
+-p 1345:1345 \
+c-icap-server:latest
+```
+
