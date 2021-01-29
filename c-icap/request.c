@@ -37,7 +37,6 @@
 #include "stats.h"
 #include "body.h"
 
-
 extern int TIMEOUT;
 extern int KEEPALIVE_TIMEOUT;
 extern const char *DEFAULT_SERVICE;
@@ -628,6 +627,10 @@ static void ec_responce_simple(ci_request_t * req, int ec)
 static int ec_responce(ci_request_t * req, int ec)
 {
     char buf[256];
+#ifdef GLASSWALL_HEADER
+    char ipaddr[INET_ADDRSTRLEN + 1];
+#endif /* GLASSWALL_HEADER */
+
     ci_service_xdata_t *srv_xdata = NULL;
     int len, allow204to200OK = 0;
     if (req->current_service_mod)
@@ -642,6 +645,17 @@ static int ec_responce(ci_request_t * req, int ec)
              ci_error_code(ec), ci_error_code_string(ec));
     ci_headers_add(req->response_header, buf);
     ci_headers_add(req->response_header, "Server: C-ICAP/" VERSION);
+#ifdef GLASSWALL_HEADER
+    memset (buf, 0x00, sizeof(buf));
+    memset (ipaddr, 0x00, sizeof(ipaddr));
+    if (!ci_getIpv4Addr (ipaddr))
+    {
+        snprintf(buf, 256, "IP Address: %s", ipaddr);
+        buf[255] = '\0';
+        ci_headers_add(req->response_header, buf);
+    }
+#endif /* GLASSWALL_HEADER */
+
     if (req->keepalive)
         ci_headers_add(req->response_header, "Connection: keep-alive");
     else
@@ -1164,6 +1178,9 @@ static void options_responce(ci_request_t * req)
     int preview, allow204, allow206, max_conns, xlen;
     int hastransfer = 0;
     int ttl;
+#ifdef GLASSWALL_HEADER
+    char ipaddr[INET_ADDRSTRLEN + 1];
+#endif /* GLASSWALL_HEADER */
     req->return_code = EC_200;
     head = req->response_header;
     srv_xdata = service_data(req->current_service_mod);
@@ -1191,6 +1208,16 @@ static void options_responce(ci_request_t * req)
     buf[MAX_HEADER_SIZE] = '\0';
     ci_headers_add(head, buf);
 
+#ifdef GLASSWALL_HEADER
+    memset (buf, 0x00, sizeof(buf));
+    memset (ipaddr, 0x00, sizeof(ipaddr));
+    if (!ci_getIpv4Addr (ipaddr))
+    {
+        snprintf(buf, MAX_HEADER_SIZE, "IP Address: %s", ipaddr);
+        buf[MAX_HEADER_SIZE] = '\0';
+        ci_headers_add(head, buf);
+    }
+#endif /* GLASSWALL_HEADER */
     ci_service_data_read_lock(srv_xdata);
     ci_headers_add(head, srv_xdata->ISTag);
     if (srv_xdata->TransferPreview[0] != '\0' && srv_xdata->preview_size >= 0) {
