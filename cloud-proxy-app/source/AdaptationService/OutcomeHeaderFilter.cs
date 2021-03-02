@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace Glasswall.IcapServer.CloudProxyApp.AdaptationService
 {
@@ -7,7 +6,15 @@ namespace Glasswall.IcapServer.CloudProxyApp.AdaptationService
     {
         public IDictionary<string, string> Extract(IDictionary<string, object> headers)
         {
-            return new Dictionary<string, string>();
+            var headerKey = "outcome-header-first-header";
+            var returnStore =  new Dictionary<string, string>();
+
+            if (headers.ContainsKey(headerKey))
+            {
+                returnStore.Add("first-header", headers[headerKey] as string);
+            }
+
+            return returnStore;
         }
     }
 }
