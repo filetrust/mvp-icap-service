@@ -33,6 +33,7 @@ namespace Glasswall.IcapServer.CloudProxyApp.Setup
 
             serviceCollection.AddTransient(typeof(IAdaptationServiceClient<>), typeof(RabbitMqClient<>));
             serviceCollection.AddTransient<IResponseProcessor, AdaptationOutcomeProcessor>();
+            serviceCollection.AddTransient<IHeaderFilter, OutcomeHeaderFilter>();
 
             return serviceCollection;
         }

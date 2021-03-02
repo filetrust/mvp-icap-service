@@ -2,7 +2,7 @@
 
 namespace Glasswall.IcapServer.CloudProxyApp.AdaptationService
 {
-    interface IHeaderFilter
+    public interface IHeaderFilter
     {
         IDictionary<string, string> Extract(IDictionary<string, object> headers);
     }
