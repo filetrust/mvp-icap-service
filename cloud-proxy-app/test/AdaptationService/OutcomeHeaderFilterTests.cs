@@ -60,6 +60,24 @@ namespace Glasswall.IcapServer.CloudProxyApp.Tests.AdaptationService
             Assert.That(output["first-header"], Is.EqualTo("First Header Value"), "Outcome Header filter should extract the matching value");
         }
 
+        [Test]
+        public void Multiple_Headers_Are_Returned()
+        {
+            var filter = new OutcomeHeaderFilter();
+            AddStandardProperties(properties);
+            properties.Add("outcome-header-first-header", "First Header Value");
+            properties.Add("outcome-header-second-header", "Second Header Value");
+
+            // Act
+            var output = filter.Extract(properties);
+
+            // Assert
+
+            Assert.That(output.Count, Is.EqualTo(2), "Outcome Header filter should return both outcome-header entries");
+            Assert.That(output, Contains.Key("second-header"), "Outcome Header filter extract the correct second key");
+            Assert.That(output["second-header"], Is.EqualTo("Second Header Value"), "Outcome Header filter should extract the matching second value");
+        }
+
         private void AddStandardProperties(IDictionary<string, object> properties)
         {
             properties.Add("file-id", Guid.NewGuid());
