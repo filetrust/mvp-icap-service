@@ -61,6 +61,11 @@ namespace Glasswall.IcapServer.CloudProxyApp
                     File.Copy(rebuiltStoreFilePath, _appConfiguration.OutputFilepath, overwrite: true);
                 }
 
+                if (_appConfiguration.ReturnConfigFilePathSpecified())
+                {
+
+                }
+
                 ClearStores(originalStoreFilePath, rebuiltStoreFilePath);
 
                 _logger.LogInformation($"Returning '{outcome}' Outcome for {fileId}");
