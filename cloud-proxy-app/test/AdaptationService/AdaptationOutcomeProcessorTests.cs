@@ -34,7 +34,7 @@ namespace Glasswall.IcapServer.CloudProxyApp.Tests.AdaptationService
             var result = processor.Process(headerMap, null);
 
             // Assert
-            Assert.That(result, Is.EqualTo(ReturnOutcome.GW_REBUILT), "expected the outcome to be 'rebuilt'");
+            Assert.That(result.Outcome, Is.EqualTo(ReturnOutcome.GW_REBUILT), "expected the outcome to be 'rebuilt'");
         }
 
         [Test]
@@ -51,7 +51,7 @@ namespace Glasswall.IcapServer.CloudProxyApp.Tests.AdaptationService
             var result = processor.Process(headerMap, null);
 
             // Assert
-            Assert.That(result, Is.EqualTo(ReturnOutcome.GW_UNPROCESSED), "expected the outcome to be 'unprocessed'");
+            Assert.That(result.Outcome, Is.EqualTo(ReturnOutcome.GW_UNPROCESSED), "expected the outcome to be 'unprocessed'");
         }
 
         [Test]
@@ -68,7 +68,7 @@ namespace Glasswall.IcapServer.CloudProxyApp.Tests.AdaptationService
             var result = processor.Process(headerMap, null);
 
             // Assert
-            Assert.That(result, Is.EqualTo(ReturnOutcome.GW_FAILED), "expected the outcome to be 'failed'");
+            Assert.That(result.Outcome, Is.EqualTo(ReturnOutcome.GW_FAILED), "expected the outcome to be 'failed'");
         }
 
         [Test]
@@ -81,7 +81,7 @@ namespace Glasswall.IcapServer.CloudProxyApp.Tests.AdaptationService
             var result = processor.Process(headerMap, null);
 
             // Assert
-            Assert.That(result, Is.EqualTo(ReturnOutcome.GW_ERROR), "expected the outcome to be 'error'");
+            Assert.That(result.Outcome, Is.EqualTo(ReturnOutcome.GW_ERROR), "expected the outcome to be 'error'");
         }
     }
 }
