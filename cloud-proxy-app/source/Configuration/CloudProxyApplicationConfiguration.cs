@@ -7,5 +7,7 @@
         public string InputFilepath { get; set; }
 
         public string OutputFilepath { get; set; }
+
+        public string ReturnConfigFilepath { get; set; }
     }
 }

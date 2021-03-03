@@ -7,6 +7,7 @@ namespace Glasswall.IcapServer.CloudProxyApp.Tests.Configuration
     {
         readonly string TestInputPath = "c:/test/inputpath.txt";
         readonly string TestOutputPath = "c:/test/outputpath.txt";
+        const string TestReturnConfigPath = "c:/test/returnpath.txt";
 
         private CloudProxyApplicationConfigurationChecker checkerUnderTest;
 
@@ -64,13 +65,14 @@ namespace Glasswall.IcapServer.CloudProxyApp.Tests.Configuration
         }
 
         [Test]
-        public void CheckConfiguration_valid_configuration()
+        public void CheckConfiguration_valid_configuration_with_optional_returnconfig([Values("", TestReturnConfigPath, null)] string returnConfigPath)
         {
             // Arrange
             var config = new CloudProxyApplicationConfiguration
             {
                 OutputFilepath = TestOutputPath,
-                InputFilepath = TestInputPath
+                InputFilepath = TestInputPath,
+                ReturnConfigFilepath = returnConfigPath
             };
 
             // Assert
