@@ -1,5 +1,6 @@
 ﻿using Glasswall.IcapServer.CloudProxyApp.AdaptationService;
 using Glasswall.IcapServer.CloudProxyApp.Configuration;
+using Glasswall.IcapServer.CloudProxyApp.Formatters;
 using Microsoft.Extensions.Logging;
 using System;
 using System.IO;
@@ -18,12 +19,14 @@ namespace Glasswall.IcapServer.CloudProxyApp
         private readonly string RebuiltStorePath;
 
         private readonly IAdaptationServiceClient<AdaptationOutcomeProcessor> _adaptationServiceClient;
+        private readonly IReturnConfigFormatter _returnConfigFormatter;
         private bool disposedValue;
 
-        public NativeProxyApplication(IAdaptationServiceClient<AdaptationOutcomeProcessor> adaptationServiceClient,
+        public NativeProxyApplication(IAdaptationServiceClient<AdaptationOutcomeProcessor> adaptationServiceClient, IReturnConfigFormatter returnConfigFormatter,
             IAppConfiguration appConfiguration, IStoreConfiguration storeConfiguration, IProcessingConfiguration processingConfiguration, ILogger<NativeProxyApplication> logger)
         {
             _adaptationServiceClient = adaptationServiceClient ?? throw new ArgumentNullException(nameof(adaptationServiceClient));
+            _returnConfigFormatter = returnConfigFormatter ?? throw new ArgumentNullException(nameof(returnConfigFormatter));
             _appConfiguration = appConfiguration ?? throw new ArgumentNullException(nameof(appConfiguration));
             if (storeConfiguration == null) throw new ArgumentNullException(nameof(storeConfiguration));
             if (processingConfiguration == null) throw new ArgumentNullException(nameof(processingConfiguration));
@@ -63,7 +66,8 @@ namespace Glasswall.IcapServer.CloudProxyApp
 
                 if (_appConfiguration.ReturnConfigFilePathSpecified())
                 {
-
+                    _logger.LogInformation($"FileId:{fileId}: Writing ReturnConfig to '{_appConfiguration.ReturnConfigFilepath}");
+                    WriteReturnConfig(fileId, _appConfiguration.ReturnConfigFilepath, requestOutcome);
                 }
 
                 ClearStores(fileId, originalStoreFilePath, rebuiltStoreFilePath);
@@ -82,6 +86,19 @@ namespace Glasswall.IcapServer.CloudProxyApp
                 _logger.LogError(ex, $"FileId:{fileId}:Error Processing 'input'");
                 ClearStores(fileId, originalStoreFilePath, rebuiltStoreFilePath);
                 return Task.FromResult((int)ReturnOutcome.GW_ERROR);
+            }
+        }
+
+        private void WriteReturnConfig(Guid fileId, string returnConfigFilepath, AdaptationRequestOutcome outcome)
+        {
+            try
+            {
+                string exportString = _returnConfigFormatter.Write(outcome.Outcome, returnConfigFilepath);
+                File.WriteAllText(returnConfigFilepath, exportString);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, $"FileId:{fileId}:Unable to output return configuration exceeded");
             }
         }
 
