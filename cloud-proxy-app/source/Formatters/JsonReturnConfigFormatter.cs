@@ -1,14 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Glasswall.IcapServer.CloudProxyApp.AdaptationService;
+using Glasswall.IcapServer.CloudProxyApp.Configuration;
+using System.Text.Json;
 
 namespace Glasswall.IcapServer.CloudProxyApp.Formatters
 {
     public class JsonReturnConfigFormatter : IReturnConfigFormatter
     {
-        public string Write(ReturnOutcome outcome, string returnConfigFilepath)
+        public string Write(AdaptationRequestOutcome outcome)
         {
-            throw new NotImplementedException();
+            string formattedConfig = string.Empty;
+            if (outcome.OutcomeHeaders.Count > 0)
+            {
+                var formatData = new ReturnConfigData
+                {
+                    OutcomeHeaders = outcome.OutcomeHeaders
+                };
+                formattedConfig = JsonSerializer.Serialize(formatData);
+            }
+
+            return formattedConfig;
         }
     }
 }
