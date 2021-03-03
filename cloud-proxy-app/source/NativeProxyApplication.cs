@@ -53,9 +53,9 @@ namespace Glasswall.IcapServer.CloudProxyApp
                 File.Copy(_appConfiguration.InputFilepath, originalStoreFilePath, overwrite: true);
 
                 _adaptationServiceClient.Connect();
-                var outcome = _adaptationServiceClient.AdaptationRequest(fileId, originalStoreFilePath, rebuiltStoreFilePath, processingCancellationToken);
+                var requestOutcome = _adaptationServiceClient.AdaptationRequest(fileId, originalStoreFilePath, rebuiltStoreFilePath, processingCancellationToken);
 
-                if (outcome == ReturnOutcome.GW_REBUILT || outcome == ReturnOutcome.GW_FAILED)
+                if (requestOutcome.Outcome == ReturnOutcome.GW_REBUILT || requestOutcome.Outcome == ReturnOutcome.GW_FAILED)
                 {
                     _logger.LogInformation($"FileId:{fileId}:Copy from '{rebuiltStoreFilePath}' to {_appConfiguration.OutputFilepath}");
                     File.Copy(rebuiltStoreFilePath, _appConfiguration.OutputFilepath, overwrite: true);
@@ -68,8 +68,8 @@ namespace Glasswall.IcapServer.CloudProxyApp
 
                 ClearStores(fileId, originalStoreFilePath, rebuiltStoreFilePath);
 
-                _logger.LogInformation($"Returning '{outcome}' Outcome for {fileId}");
-                return Task.FromResult((int)outcome);
+                _logger.LogInformation($"Returning '{requestOutcome.Outcome}' Outcome for {fileId}");
+                return Task.FromResult((int)requestOutcome.Outcome);
             }
             catch (OperationCanceledException oce)
             {

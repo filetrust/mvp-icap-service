@@ -4,6 +4,6 @@ namespace Glasswall.IcapServer.CloudProxyApp.AdaptationService
 {
     public interface IResponseProcessor
     {
-        ReturnOutcome Process(IDictionary<string, object> headers, byte[] body);
+        AdaptationRequestOutcome Process(IDictionary<string, object> headers, byte[] body);
     }
 }

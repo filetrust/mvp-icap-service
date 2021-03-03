@@ -16,7 +16,7 @@ namespace Glasswall.IcapServer.CloudProxyApp.AdaptationService
         private IModel _channel;
         private EventingBasicConsumer _consumer;
         private bool disposedValue;
-        private readonly BlockingCollection<ReturnOutcome> _respQueue = new BlockingCollection<ReturnOutcome>();
+        private readonly BlockingCollection<AdaptationRequestOutcome> _respQueue = new BlockingCollection<AdaptationRequestOutcome>();
         private readonly IResponseProcessor _responseProcessor;
         private readonly IQueueConfiguration _queueConfiguration;
         private readonly ILogger<RabbitMqClient<TResponseProcessor>> _logger;
@@ -74,12 +74,12 @@ namespace Glasswall.IcapServer.CloudProxyApp.AdaptationService
                 catch (Exception ex)
                 {
                     _logger.LogError(ex, $"Error Processing 'input'");
-                    _respQueue.Add(ReturnOutcome.GW_ERROR);
+                    _respQueue.Add(AdaptationRequestOutcome.CreateError());
                 }
             };
         }
 
-        public ReturnOutcome AdaptationRequest(Guid fileId, string originalStoreFilePath, string rebuiltStoreFilePath, CancellationToken processingCancellationToken)
+        public AdaptationRequestOutcome AdaptationRequest(Guid fileId, string originalStoreFilePath, string rebuiltStoreFilePath, CancellationToken processingCancellationToken)
         {
             if (_connection == null || _channel == null || _consumer == null)
                 throw new AdaptationServiceClientException("'Connect' should be called before 'AdaptationRequest'.");
