@@ -1,5 +1,6 @@
-﻿using Glasswall.IcapServer.CloudProxyApp.AdaptationService;
+using Glasswall.IcapServer.CloudProxyApp.AdaptationService;
 using Glasswall.IcapServer.CloudProxyApp.Configuration;
+using Glasswall.IcapServer.CloudProxyApp.Formatters;
 using Glasswall.IcapServer.CloudProxyApp.Setup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -34,7 +35,23 @@ namespace Glasswall.IcapServer.CloudProxyApp.Tests.Setup
 
             // Assert
             Assert.That(nativeProxyApplication, Is.Not.Null, "expected the object to be available");
-            Assert.AreNotSame(nativeProxyApplication, secondNativeProxyApplication, "expected the same object to be provided");
+            Assert.AreNotSame(nativeProxyApplication, secondNativeProxyApplication, "expected a different object to be provided");
+        }
+
+        [Test]
+        public void JsonReturnConfigFormatter_is_added_as_transient()
+        {
+            // Arrange
+            IConfiguration configuration = _configurationBuilder.Build();
+
+            // Act
+            var serviceProvider = _serviceCollection.ConfigureServices(configuration).BuildServiceProvider(true);
+            var configFormatter = serviceProvider.GetService<IReturnConfigFormatter>();
+            var secondConfigFormatter = serviceProvider.GetService<IReturnConfigFormatter>();
+
+            // Assert
+            Assert.That(configFormatter, Is.Not.Null, "expected the object to be available");
+            Assert.AreNotSame(configFormatter, secondConfigFormatter, "expected a different object to be provided");
         }
 
         [Test]
