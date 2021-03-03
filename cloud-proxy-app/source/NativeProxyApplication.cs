@@ -49,7 +49,7 @@ namespace Glasswall.IcapServer.CloudProxyApp
                 originalStoreFilePath = Path.Combine(OriginalStorePath, fileId.ToString());
                 rebuiltStoreFilePath = Path.Combine(RebuiltStorePath, fileId.ToString());
 
-                _logger.LogInformation($"Updating 'Original' store for {fileId}");
+                _logger.LogInformation($"FileId:{fileId}:Updating 'Original' store for {fileId}");
                 File.Copy(_appConfiguration.InputFilepath, originalStoreFilePath, overwrite: true);
 
                 _adaptationServiceClient.Connect();
@@ -57,7 +57,7 @@ namespace Glasswall.IcapServer.CloudProxyApp
 
                 if (outcome == ReturnOutcome.GW_REBUILT || outcome == ReturnOutcome.GW_FAILED)
                 {
-                    _logger.LogInformation($"Copy from '{rebuiltStoreFilePath}' to {_appConfiguration.OutputFilepath}");
+                    _logger.LogInformation($"FileId:{fileId}:Copy from '{rebuiltStoreFilePath}' to {_appConfiguration.OutputFilepath}");
                     File.Copy(rebuiltStoreFilePath, _appConfiguration.OutputFilepath, overwrite: true);
                 }
 
@@ -66,21 +66,21 @@ namespace Glasswall.IcapServer.CloudProxyApp
 
                 }
 
-                ClearStores(originalStoreFilePath, rebuiltStoreFilePath);
+                ClearStores(fileId, originalStoreFilePath, rebuiltStoreFilePath);
 
                 _logger.LogInformation($"Returning '{outcome}' Outcome for {fileId}");
                 return Task.FromResult((int)outcome);
             }
             catch (OperationCanceledException oce)
             {
-                _logger.LogError(oce, $"Error Processing Timeout 'input' {fileId} exceeded {_processingTimeoutDuration.TotalSeconds}s");
-                ClearStores(originalStoreFilePath, rebuiltStoreFilePath);
+                _logger.LogError(oce, $"FileId:{fileId}:Error Processing Timeout exceeded {_processingTimeoutDuration.TotalSeconds}s");
+                ClearStores(fileId, originalStoreFilePath, rebuiltStoreFilePath);
                 return Task.FromResult((int)ReturnOutcome.GW_ERROR);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error Processing 'input' {fileId}");
-                ClearStores(originalStoreFilePath, rebuiltStoreFilePath);
+                _logger.LogError(ex, $"FileId:{fileId}:Error Processing 'input'");
+                ClearStores(fileId, originalStoreFilePath, rebuiltStoreFilePath);
                 return Task.FromResult((int)ReturnOutcome.GW_ERROR);
             }
         }
@@ -95,11 +95,11 @@ namespace Glasswall.IcapServer.CloudProxyApp
             return guidFileId;
         }
 
-        private void ClearStores(string originalStoreFilePath, string rebuiltStoreFilePath)
+        private void ClearStores(Guid fileId, string originalStoreFilePath, string rebuiltStoreFilePath)
         {
             try
             {
-                _logger.LogInformation($"Clearing stores '{originalStoreFilePath}' and {rebuiltStoreFilePath}");
+                _logger.LogInformation($"FileId:{fileId}:Clearing stores '{originalStoreFilePath}' and {rebuiltStoreFilePath}");
                 if (!string.IsNullOrEmpty(originalStoreFilePath))
                     File.Delete(originalStoreFilePath);
                 if (!string.IsNullOrEmpty(rebuiltStoreFilePath))
