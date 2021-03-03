@@ -93,7 +93,7 @@ namespace Glasswall.IcapServer.CloudProxyApp
         {
             try
             {
-                string exportString = _returnConfigFormatter.Write(outcome.Outcome, returnConfigFilepath);
+                string exportString = _returnConfigFormatter.Write(outcome);
                 File.WriteAllText(returnConfigFilepath, exportString);
             }
             catch (Exception ex)

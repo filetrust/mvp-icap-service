@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using Glasswall.IcapServer.CloudProxyApp.AdaptationService;
 
 namespace Glasswall.IcapServer.CloudProxyApp.Formatters
 {
     public interface IReturnConfigFormatter
     {
-        string Write(ReturnOutcome outcome, string returnConfigFilepath);
+        string Write(AdaptationRequestOutcome outcome);
     }
 }
