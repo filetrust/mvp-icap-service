@@ -1,4 +1,5 @@
-﻿using Glasswall.IcapServer.CloudProxyApp.Configuration;
+﻿using Glasswall.IcapServer.CloudProxyApp.AdaptationService;
+using Glasswall.IcapServer.CloudProxyApp.Configuration;
 using Glasswall.IcapServer.CloudProxyApp.Setup;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -91,6 +92,22 @@ namespace Glasswall.IcapServer.CloudProxyApp.Tests.Setup
             // Assert
             Assert.That(queueConfiguration, Is.Not.Null, "expected the object to be available");
             Assert.AreSame(queueConfiguration, secondQueueConfiguration, "expected the same object to be provided");
+        }
+
+        [Test]
+        public void OutcomeHeaderFilter_is_added_as_transitory()
+        {
+            // Arrange
+            IConfiguration configuration = _configurationBuilder.Build();
+
+            // Act
+            var serviceProvider = _serviceCollection.ConfigureServices(configuration).BuildServiceProvider(true);
+            var outcomeHeaderFilter = serviceProvider.GetService<IHeaderFilter>();
+            var secondOutcomeHeaderFilter = serviceProvider.GetService<IHeaderFilter>();
+
+            // Assert
+            Assert.That(outcomeHeaderFilter, Is.Not.Null, "expected the object to be available");
+            Assert.AreNotSame(outcomeHeaderFilter, secondOutcomeHeaderFilter, "don't expect the same object to be provided");
         }
 
         [Test]

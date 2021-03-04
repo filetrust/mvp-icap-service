@@ -9,7 +9,7 @@ namespace Glasswall.IcapServer.CloudProxyApp.AdaptationService
     public class AdaptationOutcomeProcessor : IResponseProcessor
     {
         private readonly ILogger<AdaptationOutcomeProcessor> _logger;
-
+        private readonly IHeaderFilter _headerFilter;
         static readonly Dictionary<AdaptationOutcome, ReturnOutcome> OutcomeMap = new Dictionary<AdaptationOutcome, ReturnOutcome>
         {
             { AdaptationOutcome.Unmodified, ReturnOutcome.GW_UNPROCESSED},
@@ -17,9 +17,10 @@ namespace Glasswall.IcapServer.CloudProxyApp.AdaptationService
             { AdaptationOutcome.Failed, ReturnOutcome.GW_FAILED }
         };
 
-        public AdaptationOutcomeProcessor(ILogger<AdaptationOutcomeProcessor> logger)
+        public AdaptationOutcomeProcessor(ILogger<AdaptationOutcomeProcessor> logger, IHeaderFilter headerFilter)
         {
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _headerFilter = headerFilter ?? throw new ArgumentNullException(nameof(headerFilter));
         }
 
         public ReturnOutcome Process(IDictionary<string, object> headers, byte[] body)
@@ -39,6 +40,8 @@ namespace Glasswall.IcapServer.CloudProxyApp.AdaptationService
 
                 if (!headers.ContainsKey("file-outcome"))
                     throw NewAdaptationServiceException($"Missing outcome for File Id {fileId}");
+
+                var outcomeHeaders = CheckForOutcomeHeaders(fileId, headers);
 
                 var outcomeString = Encoding.UTF8.GetString((byte[])headers["file-outcome"]);
                 AdaptationOutcome outcome = (AdaptationOutcome)Enum.Parse(typeof(AdaptationOutcome), outcomeString, ignoreCase: true);
@@ -64,6 +67,13 @@ namespace Glasswall.IcapServer.CloudProxyApp.AdaptationService
                 _logger.LogError($"Poorly formated adaptation outcome : {asce.Message}");
                 return ReturnOutcome.GW_ERROR;
             }
+        }
+
+        private IDictionary<string, string> CheckForOutcomeHeaders(Guid fileId, IDictionary<string, object> headers)
+        {
+            var result = _headerFilter.Extract(headers);
+            _logger.LogInformation($"File Id {fileId}: {result.Count} outcome headers found");
+            return result;
         }
 
         private AdaptationServiceClientException NewAdaptationServiceException(string message)
