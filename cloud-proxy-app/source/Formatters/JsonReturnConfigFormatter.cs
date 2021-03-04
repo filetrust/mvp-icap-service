@@ -1,6 +1,6 @@
 ﻿using Glasswall.IcapServer.CloudProxyApp.AdaptationService;
 using Glasswall.IcapServer.CloudProxyApp.Configuration;
-using System.Text.Json;
+using Newtonsoft.Json;
 
 namespace Glasswall.IcapServer.CloudProxyApp.Formatters
 {
@@ -15,7 +15,7 @@ namespace Glasswall.IcapServer.CloudProxyApp.Formatters
                 {
                     OutcomeHeaders = outcome.OutcomeHeaders
                 };
-                formattedConfig = JsonSerializer.Serialize(formatData);
+                formattedConfig = JsonConvert.SerializeObject(formatData);
             }
 
             return formattedConfig;

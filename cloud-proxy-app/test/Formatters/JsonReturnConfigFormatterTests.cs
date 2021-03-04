@@ -49,13 +49,10 @@ namespace Glasswall.IcapServer.CloudProxyApp.Tests.Formatters
             var formattedData = formatter.Write(testOutcome);
 
             // Assert
-
             JObject configData = JObject.Parse(formattedData);
             IList<string> parseErrors = new List<string>();
-            Assert.That(configData.IsValid(schema, out parseErrors), Is.True, $"the formated data comply with the expected schema: {string.Join(",", parseErrors.A)}");
+            Assert.That(configData.IsValid(schema, out parseErrors), Is.True, $"the formated data comply with the expected schema: {string.Join(",", parseErrors)}");
         }
-
-
     }
 
     class ConfigData
