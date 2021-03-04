@@ -33,8 +33,7 @@ namespace Glasswall.IcapServer.CloudProxyApp.Tests.Formatters
         public void Output_Is_Correctly_Formatted()
         {
             // Arrange
-            var schemaGenerator = new JSchemaGenerator();
-            var schema = schemaGenerator.Generate(typeof(ConfigData));
+            var schema = GenerateReturnConfigSchema();
 
             var testOutcome = new AdaptationRequestOutcome
             {
@@ -50,15 +49,29 @@ namespace Glasswall.IcapServer.CloudProxyApp.Tests.Formatters
 
             // Assert
             JObject configData = JObject.Parse(formattedData);
-            IList<string> parseErrors = new List<string>();
-            Assert.That(configData.IsValid(schema, out parseErrors), Is.True, $"the formated data comply with the expected schema: {string.Join(",", parseErrors)}");
+            Assert.That(configData.IsValid(schema, out IList<string> parseErrors), Is.True, $"the formated data comply with the expected schema: {string.Join(",", parseErrors)}");
         }
-    }
 
-    class ConfigData
-    {
-        [Required]
-        [JsonProperty(PropertyName = "outcome-headers")]
-        public IDictionary<string, string> OutcomeHeaders;
+        private JSchema GenerateReturnConfigSchema()
+        {
+            string schemaJson = @"{
+              'type': 'object',
+              'properties': {
+                  'outcome-headers': {
+                      'type': 'object',
+                      'additionalProperties': {
+                          'type': [
+                              'string',
+                              'null'
+                          ]
+                      }
+                  }
+              },
+              'required': [
+                'outcome-headers'
+              ]
+            }";
+            return JSchema.Parse(schemaJson);
+        }
     }
 }
