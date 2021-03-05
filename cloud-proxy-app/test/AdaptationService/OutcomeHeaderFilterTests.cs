@@ -4,6 +4,7 @@ using Moq;
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace Glasswall.IcapServer.CloudProxyApp.Tests.AdaptationService
 {
@@ -50,7 +51,7 @@ namespace Glasswall.IcapServer.CloudProxyApp.Tests.AdaptationService
         public void Single_Header_Is_Returned()
         {
             AddStandardProperties(properties);
-            properties.Add("outcome-header-first-header", "First Header Value");
+            properties.Add("outcome-header-first-header", Encoding.UTF8.GetBytes("First Header Value"));
    
             // Act
             var output = outcomeHeaderFilter.Extract(properties);
@@ -65,8 +66,8 @@ namespace Glasswall.IcapServer.CloudProxyApp.Tests.AdaptationService
         public void Multiple_Headers_Are_Returned()
         {
             AddStandardProperties(properties);
-            properties.Add("outcome-header-first-header", "First Header Value");
-            properties.Add("outcome-header-second-header", "Second Header Value");
+            properties.Add("outcome-header-first-header", Encoding.UTF8.GetBytes("First Header Value"));
+            properties.Add("outcome-header-second-header", Encoding.UTF8.GetBytes("Second Header Value"));
 
             // Act
             var output = outcomeHeaderFilter.Extract(properties);
@@ -95,8 +96,8 @@ namespace Glasswall.IcapServer.CloudProxyApp.Tests.AdaptationService
         public void Invalid_Header_String_Not_Included([Values("", null)] string invalidValue)
         {
             AddStandardProperties(properties);
-            properties.Add("outcome-header-first-header", "Valid Header Value");
-            properties.Add("outcome-header-second-header", invalidValue);
+            properties.Add("outcome-header-first-header", Encoding.UTF8.GetBytes("Valid Header Value"));
+            properties.Add("outcome-header-second-header", new byte[0]);
 
             // Act
             var output = outcomeHeaderFilter.Extract(properties);
@@ -107,8 +108,8 @@ namespace Glasswall.IcapServer.CloudProxyApp.Tests.AdaptationService
 
         private void AddStandardProperties(IDictionary<string, object> properties)
         {
-            properties.Add("file-id", Guid.NewGuid());
-            properties.Add("file-outcome", "replace");
+            properties.Add("file-id", Encoding.UTF8.GetBytes(Guid.NewGuid().ToString()));
+            properties.Add("file-outcome", Encoding.UTF8.GetBytes("replace"));
         }
     }
 }
