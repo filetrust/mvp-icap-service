@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Glasswall.IcapServer.CloudProxyApp.AdaptationService
 {
@@ -16,22 +17,40 @@ namespace Glasswall.IcapServer.CloudProxyApp.AdaptationService
 
         public IDictionary<string, string> Extract(IDictionary<string, object> headers)
         {
-            var outcomeHeaders = headers.Where(h => h.Key.StartsWith(OutcomeHeaderKeyRoot)).ToDictionary(p => p.Key, p => p.Value); 
-            var returnStore =  new Dictionary<string, string>();
-            
-            foreach (var item in outcomeHeaders)
+            var returnStore = new Dictionary<string, string>();
+
+            if (headers?.Count > 0)
             {
-                var strippedKey = item.Key.Remove(0, OutcomeHeaderKeyRoot.Length + 1);
-                var valueString = item.Value as string;
-                if (string.IsNullOrEmpty(valueString))
+                var outcomeHeaders = headers.Where(h => h.Key.StartsWith(OutcomeHeaderKeyRoot)).ToDictionary(p => p.Key, p => p.Value);
+
+                var fileId = GetHeaderValue(headers["file-id"]);
+
+                foreach (var item in outcomeHeaders)
                 {
-                    logger.LogWarning($"FileId:{headers["file-id"]}: Invalid outcome header value for {item.Key} ");
-                    continue;
+                    var strippedKey = item.Key.Remove(0, OutcomeHeaderKeyRoot.Length + 1);
+                    var valueString = GetHeaderValue(item.Value);
+                    if (string.IsNullOrEmpty(valueString))
+                    {
+                        logger.LogWarning($"FileId:{fileId}: Invalid outcome header value for {item.Key} ");
+                        continue;
+                    }
+                    returnStore.Add(strippedKey, valueString);
                 }
-                returnStore.Add(strippedKey, valueString);
             }
 
             return returnStore;
+        }
+
+        private string GetHeaderValue(object value)
+        {
+            try
+            {
+                return Encoding.UTF8.GetString((byte[])value);
+            }
+            catch
+            {
+                return string.Empty;
+            }
         }
     }
 }
