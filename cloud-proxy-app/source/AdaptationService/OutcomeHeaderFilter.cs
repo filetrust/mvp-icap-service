@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.Logging;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace Glasswall.IcapServer.CloudProxyApp.AdaptationService
 {
@@ -22,7 +23,7 @@ namespace Glasswall.IcapServer.CloudProxyApp.AdaptationService
             foreach (var item in outcomeHeaders)
             {
                 var strippedKey = item.Key.Remove(0, OutcomeHeaderKeyRoot.Length + 1);
-                var valueString = item.Value as string;
+                var valueString = Encoding.UTF8.GetString((byte[])item.Value);
                 if (string.IsNullOrEmpty(valueString))
                 {
                     logger.LogWarning($"FileId:{headers["file-id"]}: Invalid outcome header value for {item.Key} ");
