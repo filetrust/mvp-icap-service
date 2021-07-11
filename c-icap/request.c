@@ -799,8 +799,10 @@ static int format_body_chunk(ci_request_t * req)
         req->remain_send_block_bytes += def_bytes + 2;
     } else if (req->remain_send_block_bytes == CI_EOF) {
         if (req->return_code == EC_206 && req->i206_use_original_body >= 0) {
-            def_bytes = sprintf(req->wbuf, "0; use-original-body=%" PRId64 "\r\n\r\n",
-                                req->i206_use_original_body );
+            /* def_bytes = sprintf(req->wbuf, "0; use-original-body=%" PRId64 "\r\n\r\n",
+                                req->i206_use_original_body ); */
+            def_bytes = snprintf(req->wbuf, sizeof(req->wbuf), "0; use-original-body=%" PRId64 "\r\n\r\n", 
+                                req->i206_use_original_body);
             req->pstrblock_responce = req->wbuf;
             req->remain_send_block_bytes = def_bytes;
         } else {
@@ -1235,7 +1237,8 @@ static void options_responce(ci_request_t * req)
 
     /* ci_headers_add(head, "Max-Connections: 20"); */
     if (ttl > 0) {
-        sprintf(buf, "Options-TTL: %d", ttl);
+        /* sprintf(buf, "Options-TTL: %d", ttl); */
+        snprintf(buf, sizeof(buf), "Options-TTL: %d", ttl);
         ci_headers_add(head, buf);
     } else
         ci_headers_add(head, "Options-TTL: 3600");
@@ -1243,11 +1246,13 @@ static void options_responce(ci_request_t * req)
     ci_strtime_rfc822(buf + strlen(buf));
     ci_headers_add(head, buf);
     if (preview >= 0) {
-        sprintf(buf, "Preview: %d", srv_xdata->preview_size);
+        /*sprintf(buf, "Preview: %d", srv_xdata->preview_size);*/
+        snprintf(buf, sizeof(buf), "Preview: %d", srv_xdata->preview_size);
         ci_headers_add(head, buf);
     }
     if (max_conns >= 0) {
-        sprintf(buf, "Max-Connections: %d", max_conns);
+        /*sprintf(buf, "Max-Connections: %d", max_conns);*/
+        snprintf(buf, sizeof(buf), "Max-Connections: %d", max_conns);
         ci_headers_add(head, buf);
     }
     if (allow204 && allow206) {
