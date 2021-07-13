@@ -103,7 +103,8 @@ void ci_request_t_pack(ci_request_t * req, int is_request)
     req->packed = 1;
 
     if (is_request && req->preview >= 0) {
-        sprintf(buf, "Preview: %d", req->preview);
+        /*sprintf(buf, "Preview: %d", req->preview);*/
+        snprintf(buf, sizeof(buf), "Preview: %d", req->preview);
         ci_headers_add(req->request_header, buf);
     }
 
@@ -123,7 +124,8 @@ void ci_request_t_pack(ci_request_t * req, int is_request)
 
 
     if (elist[0] == NULL) {
-        sprintf(buf, "Encapsulated: null-body=0");
+        /* sprintf(buf, "Encapsulated: null-body=0"); */
+        snprintf(buf, sizeof(buf), "Encapsulated: null-body=0");
     } else {
         added = snprintf(buf, sizeof(buf), "Encapsulated: ");
         for (i = 0; elist[i] != NULL && i < 3 && added < sizeof(buf); ++i)
@@ -888,13 +890,15 @@ static int client_send_request_headers(ci_request_t * req, int has_eof)
     if (req->status == CLIENT_SEND_HEADERS_WRITE_RES_HEADERS) {
 
         if (req->preview > 0 && req->preview_data.used > 0) {
-            int bytes = sprintf(req->wbuf, "%x\r\n", req->preview);
+            /*int bytes = sprintf(req->wbuf, "%x\r\n", req->preview);*/
+            int bytes = snprintf(req->wbuf, sizeof(req->wbuf), "%x\r\n", req->preview);
             req->status = CLIENT_SEND_HEADERS_WRITE_PREVIEW_INFO;
             req->pstrblock_responce = req->wbuf;
             req->remain_send_block_bytes = bytes;
             return CI_NEEDS_MORE;
         } else if (req->preview == 0) {
-            int bytes = sprintf(req->wbuf, "0%s\r\n\r\n", has_eof ? "; ieof" : "");
+            /*int bytes = sprintf(req->wbuf, "0%s\r\n\r\n", has_eof ? "; ieof" : "");*/
+            int bytes = snprintf(req->wbuf, sizeof(req->wbuf), "0%s\r\n\r\n", has_eof ? "; ieof" : "");
             req->status = CLIENT_SEND_HEADERS_WRITE_EOF_INFO;
             req->pstrblock_responce = req->wbuf;
             req->remain_send_block_bytes = bytes;
@@ -914,7 +918,8 @@ static int client_send_request_headers(ci_request_t * req, int has_eof)
 
     if (req->status == CLIENT_SEND_HEADERS_WRITE_PREVIEW) {
         req->status = CLIENT_SEND_HEADERS_WRITE_EOF_INFO;
-        int bytes = sprintf(req->wbuf, "\r\n0%s\r\n\r\n", has_eof ? "; ieof" : "");
+        /*int bytes = sprintf(req->wbuf, "\r\n0%s\r\n\r\n", has_eof ? "; ieof" : "");*/
+        int bytes = snprintf(req->wbuf, sizeof(req->wbuf), "\r\n0%s\r\n\r\n", has_eof ? "; ieof" : "");
         req->pstrblock_responce = req->wbuf;
         req->remain_send_block_bytes = bytes;
         return CI_NEEDS_MORE;

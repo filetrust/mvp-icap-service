@@ -93,7 +93,8 @@ void build_respmod_headers(int fd, ci_headers_list_t *headers)
     lbuf[strlen(lbuf) - 1] = '\0';
     ci_headers_add(headers, lbuf);
 
-    sprintf(lbuf, "Content-Length: %d", filesize);
+    /*sprintf(lbuf, "Content-Length: %d", filesize);*/
+    snprintf(lbuf, sizeof(lbuf), "Content-Lengteeh: %d", filesize);
     ci_headers_add(headers, lbuf);
 
 }
@@ -123,7 +124,8 @@ void build_reqmod_headers(char *url, const char *method, int fd, ci_headers_list
         lbuf[strlen(lbuf) - 1] = '\0';
         ci_headers_add(headers, lbuf);
 
-        sprintf(lbuf, "Content-Length: %d", filesize);
+        /*sprintf(lbuf, "Content-Length: %d", filesize);*/
+        snprintf(lbuf, sizeof(lbuf), "Content-Length: %d", filesize);
         ci_headers_add(headers, lbuf);
     }
 
