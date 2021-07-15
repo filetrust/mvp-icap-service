@@ -34,6 +34,9 @@ CI_DECLARE_FUNC(void) ci_strtime_rfc822(char *buf);
 CI_DECLARE_FUNC(int)  ci_mktemp_file(char*dir,char *name_template,char *filename);
 CI_DECLARE_FUNC(int)  ci_usleep(unsigned long usec);
 
+#ifdef GLASSWALL_HEADER
+CI_DECLARE_FUNC(int)  ci_getIpv4Addr(char *addr);
+#endif /* GLASSWALL_HEADER */
 
 #ifdef _WIN32
 CI_DECLARE_FUNC(int) mkstemp(char *filename);

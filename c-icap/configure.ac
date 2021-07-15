@@ -42,7 +42,7 @@ dnl Checks for OS specific flags and posix threads libraries.....
 
 case "$host_os" in
      linux*)
-	CFLAGS="-D_REENTRANT $CFLAGS"
+	CFLAGS="-D_REENTRANT -DGLASSWALL_HEADER $CFLAGS"
 	THREADS_LDADD="-lpthread"
 	THREADS_LDFLAGS=""
      ;;

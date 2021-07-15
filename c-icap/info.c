@@ -27,6 +27,10 @@
 #include "proc_threads_queues.h"
 #include "debug.h"
 
+#ifdef GLASSWALL_HEADER
+#include "util.h"
+#endif /* GLASSWALL_HEADER */
+
 int info_init_service(ci_service_xdata_t * srv_xdata,
                       struct ci_server_conf *server_conf);
 int info_check_preview_handler(char *preview_data, int preview_data_len,
@@ -141,6 +145,10 @@ int info_check_preview_handler(char *preview_data, int preview_data_len,
                                ci_request_t * req)
 {
     struct info_req_data *info_data = ci_service_data(req);
+#ifdef GLASSWALL_HEADER
+    char buf[MAX_HEADER_SIZE + 1];
+    char ipaddr[INET_ADDRSTRLEN + 1];
+#endif /* GLASSWALL_HEADER */
 
     if (ci_req_hasbody(req))
         return CI_MOD_ALLOW204;
@@ -151,6 +159,17 @@ int info_check_preview_handler(char *preview_data, int preview_data_len,
 
     ci_http_response_add_header(req, "HTTP/1.0 200 OK");
     ci_http_response_add_header(req, "Server: C-ICAP");
+
+#ifdef GLASSWALL_HEADER
+    memset (buf, 0x00, sizeof(buf));
+    memset (ipaddr, 0x00, sizeof(ipaddr));
+    if (!ci_getIpv4Addr (ipaddr))
+    {
+        snprintf(buf, MAX_HEADER_SIZE, "IP Address: %s", ipaddr);
+        buf[MAX_HEADER_SIZE] = '\0';
+        ci_http_response_add_header(req, buf);
+    }
+#endif /* GLASSWALL_HEADER */
     ci_http_response_add_header(req, "Content-Type: text/html");
     ci_http_response_add_header(req, "Content-Language: en");
     ci_http_response_add_header(req, "Connection: close");
